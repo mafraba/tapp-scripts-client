@@ -1,0 +1,63 @@
+package main
+
+import "testing"
+import "encoding/json"
+
+/*
+	Test that the unmarshalling is correct
+*/
+func TestUnmarshal(t *testing.T) {
+	const jsonSample = `[
+	  {
+	    "execution_order": 1,
+	    "parameter_values": {
+	
+	    },
+	    "type": "boot",
+	    "uuid": "53c3b86e63051f336b00036f",
+	    "script": {
+	      "code": "#!/bin/bash\nhostname\npwd",
+	      "uuid": "53c3b79963051f7a8800036b",
+	      "attachment_paths": [
+	      ]
+	    }
+	  },
+	  {
+	    "execution_order": 4611686018427387903,
+	    "parameter_values": {
+	    },
+	    "type": "boot",
+	    "uuid": "53c3b73163051f6d46000367",
+	    "script": {
+	      "code": "echo .",
+	      "uuid": "4ea19048d907b10559000003",
+	      "attachment_paths": [
+	      ]
+	    }
+	  }
+	]`
+
+	var executions []Execution
+
+	json.Unmarshal([]byte(jsonSample), &executions)
+
+	if len(executions) != 2 {
+		t.Errorf("Expected 2 execution items")
+	}
+
+	if executions[0].Order != 1 {
+		t.Errorf("Test failed. Incorrect Order %v at %v ", executions[0].Order, executions[0])
+	}
+
+	if executions[0].UUID != "53c3b86e63051f336b00036f" {
+		t.Errorf("Test failed. Incorrect UUID %v at %v ", executions[0].UUID, executions[0])
+	}
+
+	if executions[0].Script.Code != "#!/bin/bash\nhostname\npwd" {
+		t.Errorf("Test failed. Incorrect Script Code %v at %v ", executions[0].Script.Code, executions[0])
+	}
+
+	if executions[0].Script.UUID != "53c3b79963051f7a8800036b" {
+		t.Errorf("Test failed. Incorrect Script UUID %v at %v ", executions[0].Script.UUID, executions[0])
+	}
+}

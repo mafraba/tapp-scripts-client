@@ -9,7 +9,6 @@ import "encoding/xml"
 import "os"
 import "log"
 import "crypto/tls"
-import "runtime"
 
 type TappConfig struct {
 	XMLName     xml.Name `xml:"tapp"`
