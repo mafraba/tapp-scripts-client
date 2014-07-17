@@ -5,7 +5,7 @@ import "net/http"
 import "io/ioutil"
 import "encoding/xml"
 
-// import "encoding/json"
+import "encoding/json"
 import "os"
 import "log"
 import "crypto/tls"
@@ -77,7 +77,8 @@ func main() {
 
 	fmt.Printf("%s\n\n", body)
 
-	// var policy data.Policy
-	// json.Unmarshal(body, &policy)
+	var executions []Execution
+	json.Unmarshal(body, &executions)
 
+	fmt.Println(executions)
 }
