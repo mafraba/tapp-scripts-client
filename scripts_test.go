@@ -141,10 +141,10 @@ func TestScriptConclusionMarshalling(t *testing.T) {
 	const expectedJson = `{"script_characterization_id":"53c3b86e63051f336b00036f","output":".","exit_code":0,"started_at":"2014-07-14T13:37:21.283363+02:00","finished_at":"2014-07-14T13:37:21.323643+02:00"}`
 
 	conclusion := ScriptConclusion{
-		UUID: "53c3b86e63051f336b00036f",
-		Output: ".",
-		ExitCode: 0,
-		StartedAt: "2014-07-14T13:37:21.283363+02:00",
+		UUID:       "53c3b86e63051f336b00036f",
+		Output:     ".",
+		ExitCode:   0,
+		StartedAt:  "2014-07-14T13:37:21.283363+02:00",
 		FinishedAt: "2014-07-14T13:37:21.323643+02:00",
 	}
 

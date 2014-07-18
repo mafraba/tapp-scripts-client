@@ -61,6 +61,7 @@ func main() {
 
 	const configPath = "./tapp/client.xml"
 	const endPoint = "blueprint/script_characterizations?type=boot"
+	const timestampLayout = "2006-01-02T15:04:05.000000-07:00"
 
 	// Create an http client
 	config := openTappConfiguration(configPath)
@@ -88,9 +89,13 @@ func main() {
 	for _, ex := range scriptChars {
 		log.Println("Executing :\n", ex.Script.Code)
 		output, exitCode, startedAt, finishedAt := ExecCode(ex.Script.Code)
-		log.Println("Output :\n", output)
-		log.Println("Exit Status :\n", exitCode)
-		log.Println("Start time :\n", startedAt)
-		log.Println("Finish time :\n", finishedAt)
+		scriptConclusion := ScriptConclusion{
+			UUID:       ex.UUID,
+			Output:     output,
+			ExitCode:   exitCode,
+			StartedAt:  startedAt.Format(timestampLayout),
+			FinishedAt: finishedAt.Format(timestampLayout),
+		}
+		log.Println("Conclusion :\n", scriptConclusion)
 	}
 }
