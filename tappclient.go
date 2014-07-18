@@ -1,6 +1,5 @@
 package main
 
-import "fmt"
 import "net/http"
 import "io/ioutil"
 import "encoding/xml"
@@ -27,7 +26,7 @@ type Cert struct {
 func openTappConfiguration(fileLocation string) (config TappConfig) {
 	xmlFile, err := os.Open(fileLocation)
 	if err != nil {
-		fmt.Println("Error opening file:", err)
+		log.Println("Error opening file:", err)
 		return
 	}
 	defer xmlFile.Close()
@@ -75,10 +74,15 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	fmt.Printf("%s\n\n", body)
-
 	var executions []Execution
 	json.Unmarshal(body, &executions)
 
-	fmt.Println(executions)
+	for _ , ex := range executions {
+		log.Println("Executing :\n", ex.Script.Code)
+		output, exitCode, startedAt, finishedAt := ExecCode(ex.Script.Code)
+		log.Println("Output :\n", output)
+		log.Println("Exit Status :\n", exitCode)
+		log.Println("Start time :\n", startedAt)
+		log.Println("Finish time :\n", finishedAt)
+	}
 }
