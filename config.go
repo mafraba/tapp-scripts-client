@@ -4,9 +4,9 @@ import (
 	"crypto/tls"
 	"encoding/xml"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
-	"log"
 )
 
 type TappConfig struct {
