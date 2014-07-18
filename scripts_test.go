@@ -40,28 +40,28 @@ func TestUnmarshal(t *testing.T) {
 	  }
 	]`
 
-	var executions []Execution
+	var scriptChars []ScriptCharacterization
 
-	json.Unmarshal([]byte(jsonSample), &executions)
+	json.Unmarshal([]byte(jsonSample), &scriptChars)
 
-	if len(executions) != 2 {
+	if len(scriptChars) != 2 {
 		t.Errorf("Expected 2 execution items")
 	}
 
-	if executions[0].Order != 1 {
-		t.Errorf("Test failed. Incorrect Order %v at %v ", executions[0].Order, executions[0])
+	if scriptChars[0].Order != 1 {
+		t.Errorf("Test failed. Incorrect Order %v at %v ", scriptChars[0].Order, scriptChars[0])
 	}
 
-	if executions[0].UUID != "53c3b86e63051f336b00036f" {
-		t.Errorf("Test failed. Incorrect UUID %v at %v ", executions[0].UUID, executions[0])
+	if scriptChars[0].UUID != "53c3b86e63051f336b00036f" {
+		t.Errorf("Test failed. Incorrect UUID %v at %v ", scriptChars[0].UUID, scriptChars[0])
 	}
 
-	if executions[0].Script.Code != "#!/bin/bash\nhostname\npwd" {
-		t.Errorf("Test failed. Incorrect Script Code %v at %v ", executions[0].Script.Code, executions[0])
+	if scriptChars[0].Script.Code != "#!/bin/bash\nhostname\npwd" {
+		t.Errorf("Test failed. Incorrect Script Code %v at %v ", scriptChars[0].Script.Code, scriptChars[0])
 	}
 
-	if executions[0].Script.UUID != "53c3b79963051f7a8800036b" {
-		t.Errorf("Test failed. Incorrect Script UUID %v at %v ", executions[0].Script.UUID, executions[0])
+	if scriptChars[0].Script.UUID != "53c3b79963051f7a8800036b" {
+		t.Errorf("Test failed. Incorrect Script UUID %v at %v ", scriptChars[0].Script.UUID, scriptChars[0])
 	}
 }
 
@@ -121,15 +121,15 @@ func TestExecBadCode(t *testing.T) {
 }
 
 /*
-	Test reordering executions by order field
+	Test reordering Script Characterizations by order field
 */
 func TestSortByOrder(t *testing.T) {
-	var executions = []Execution{{Order: 2}, {Order: 3}, {Order: 1}}
-	sort.Sort(ByOrder(executions))
+	var scriptCharacterizations = []ScriptCharacterization{{Order: 2}, {Order: 3}, {Order: 1}}
+	sort.Sort(ByOrder(scriptCharacterizations))
 
-	for i, ex := range executions {
+	for i, ex := range scriptCharacterizations {
 		if ex.Order != i+1 {
-			t.Errorf("Sorting executions fails!")
+			t.Errorf("Sorting Script Characterizations fails!")
 		}
 	}
 }

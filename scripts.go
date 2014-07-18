@@ -7,7 +7,7 @@ import "syscall"
 import "log"
 import "os"
 
-type Execution struct {
+type ScriptCharacterization struct {
 	Order  int    `json:"execution_order"`
 	UUID   string `json:"uuid"`
 	Script Script `json:"script"`
@@ -18,8 +18,8 @@ type Script struct {
 	UUID string `json:"uuid"`
 }
 
-// ByOrder implements sort.Interface for []Execution based on the Order field
-type ByOrder []Execution
+// ByOrder implements sort.Interface for []ScriptCharacterization based on the Order field
+type ByOrder []ScriptCharacterization
 
 func (a ByOrder) Len() int           { return len(a) }
 func (a ByOrder) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }

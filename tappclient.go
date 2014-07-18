@@ -78,14 +78,14 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	var executions []Execution
-	json.Unmarshal(body, &executions)
+	var scriptChars []ScriptCharacterization
+	json.Unmarshal(body, &scriptChars)
 
 	// Sort by execution order
-	sort.Sort(ByOrder(executions))
+	sort.Sort(ByOrder(scriptChars))
 
 	// Execute them sequentially
-	for _, ex := range executions {
+	for _, ex := range scriptChars {
 		log.Println("Executing :\n", ex.Script.Code)
 		output, exitCode, startedAt, finishedAt := ExecCode(ex.Script.Code)
 		log.Println("Output :\n", output)
