@@ -1,7 +1,10 @@
 package main
 
-import "testing"
-import "encoding/json"
+import (
+	"encoding/json"
+	"sort"
+	"testing"
+)
 
 /*
 	Test that the unmarshalling is correct
@@ -102,7 +105,7 @@ func TestExecBadCode(t *testing.T) {
 
 	if exitCode != 127 {
 		t.Errorf("Exit code was %v but expected was %v", exitCode, 127)
-	}	
+	}
 
 	if &startedAt == nil {
 		t.Errorf("Start timestamp was nil")
@@ -114,5 +117,19 @@ func TestExecBadCode(t *testing.T) {
 
 	if startedAt.After(finishedAt) {
 		t.Errorf("Inconsistent Timestamps")
+	}
+}
+
+/*
+	Test reordering executions by order field
+*/
+func TestSortByOrder(t *testing.T) {
+	var unsorted = []Execution{{Order: 2}, {Order: 3}, {Order: 1}}
+	var sorted = sort.Sort(ByOrder(unsorted))
+
+	for i, ex := range sorted {
+		if ex.Order != i+1 {
+			t.Errorf("Sorting executions fails!")
+		}
 	}
 }

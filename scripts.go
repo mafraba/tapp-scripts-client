@@ -44,7 +44,7 @@ func ExecCode(code string) (output string, exitCode int, startedAt time.Time, fi
 	output = string(bytes)
 	exitCode = extractExitCode(err)
 
-	// Return the output, exit code, and timestamps		
+	// Return the output, exit code, and timestamps
 	return
 }
 

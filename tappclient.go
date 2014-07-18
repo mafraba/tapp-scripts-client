@@ -77,7 +77,7 @@ func main() {
 	var executions []Execution
 	json.Unmarshal(body, &executions)
 
-	for _ , ex := range executions {
+	for _, ex := range executions {
 		log.Println("Executing :\n", ex.Script.Code)
 		output, exitCode, startedAt, finishedAt := ExecCode(ex.Script.Code)
 		log.Println("Output :\n", output)
