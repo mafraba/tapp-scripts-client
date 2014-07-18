@@ -18,6 +18,14 @@ type Script struct {
 	UUID string `json:"uuid"`
 }
 
+type ScriptConclusion struct {
+	UUID   string `json:"script_characterization_id"`
+	Output   string `json:"output"`
+	ExitCode int `json:"exit_code"`
+	StartedAt string `json:"started_at"`
+	FinishedAt string `json:"finished_at"`
+}
+
 // ByOrder implements sort.Interface for []ScriptCharacterization based on the Order field
 type ByOrder []ScriptCharacterization
 
