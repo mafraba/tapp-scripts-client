@@ -74,4 +74,20 @@ func TestExecCode(t *testing.T) {
 	if output != expectedOutput {
 		t.Errorf("Output was %v but expected was %v", output, expectedOutput)
 	}
+
+	if exitCode != 0 {
+		t.Errorf("Exit code was %v but expected was %v", exitCode, 0)
+	}
+
+	if &startedAt == nil {
+		t.Errorf("Start timestamp was nil")
+	}
+
+	if &finishedAt == nil {
+		t.Errorf("End timestamp was nil")
+	}
+
+	if startedAt.After(finishedAt) {
+		t.Errorf("Inconsistent Timestamps")
+	}
 }
