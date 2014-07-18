@@ -18,6 +18,16 @@ type Script struct {
 	UUID string `json:"uuid"`
 }
 
+// ByOrder implements sort.Interface for []Execution based on the Order field
+type ByOrder []Execution
+
+func (a ByOrder) Len() int           { return len(a) }
+func (a ByOrder) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByOrder) Less(i, j int) bool { return a[i].Order < a[j].Order }
+
+/*
+	Execute script and return output, exit code, and init/end timestamps
+*/
 func ExecCode(code string) (output string, exitCode int, startedAt time.Time, finishedAt time.Time) {
 	// First we'll create a temp file
 	tmpFile, err := ioutil.TempFile("", "tappscript-tmp")

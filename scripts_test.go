@@ -124,10 +124,10 @@ func TestExecBadCode(t *testing.T) {
 	Test reordering executions by order field
 */
 func TestSortByOrder(t *testing.T) {
-	var unsorted = []Execution{{Order: 2}, {Order: 3}, {Order: 1}}
-	var sorted = sort.Sort(ByOrder(unsorted))
+	var executions = []Execution{{Order: 2}, {Order: 3}, {Order: 1}}
+	sort.Sort(ByOrder(executions))
 
-	for i, ex := range sorted {
+	for i, ex := range executions {
 		if ex.Order != i+1 {
 			t.Errorf("Sorting executions fails!")
 		}

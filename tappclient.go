@@ -1,13 +1,15 @@
 package main
 
-import "net/http"
-import "io/ioutil"
-import "encoding/xml"
-
-import "encoding/json"
-import "os"
-import "log"
-import "crypto/tls"
+import (
+	"crypto/tls"
+	"encoding/json"
+	"encoding/xml"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"sort"
+)
 
 type TappConfig struct {
 	XMLName     xml.Name `xml:"tapp"`
@@ -60,23 +62,29 @@ func main() {
 	const configPath = "./tapp/client.xml"
 	const endPoint = "blueprint/script_characterizations?type=boot"
 
+	// Create an http client
 	config := openTappConfiguration(configPath)
 	client := createClient(config)
 
+	// Get scripts
 	response, err := client.Get(config.ApiEndpoint + endPoint)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer response.Body.Close()
 
+	// Parse them
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	var executions []Execution
 	json.Unmarshal(body, &executions)
 
+	// Sort by execution order
+	sort.Sort(ByOrder(executions))
+
+	// Execute them sequentially
 	for _, ex := range executions {
 		log.Println("Executing :\n", ex.Script.Code)
 		output, exitCode, startedAt, finishedAt := ExecCode(ex.Script.Code)
