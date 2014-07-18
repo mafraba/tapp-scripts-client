@@ -63,11 +63,11 @@ func TestUnmarshal(t *testing.T) {
 }
 
 /*
-	Test the execution of code
+	Test the execution of correct code
 */
 func TestExecCode(t *testing.T) {
 	const code = "echo Hello!"
-	const expectedOutput = "Hello!"
+	const expectedOutput = "Hello!\n"
 
 	output, exitCode, startedAt, finishedAt := ExecCode(code)
 
@@ -78,6 +78,31 @@ func TestExecCode(t *testing.T) {
 	if exitCode != 0 {
 		t.Errorf("Exit code was %v but expected was %v", exitCode, 0)
 	}
+
+	if &startedAt == nil {
+		t.Errorf("Start timestamp was nil")
+	}
+
+	if &finishedAt == nil {
+		t.Errorf("End timestamp was nil")
+	}
+
+	if startedAt.After(finishedAt) {
+		t.Errorf("Inconsistent Timestamps")
+	}
+}
+
+/*
+	Test the execution of code with an exit error != 0
+*/
+func TestExecBadCode(t *testing.T) {
+	const code = "lk"
+
+	_, exitCode, startedAt, finishedAt := ExecCode(code)
+
+	if exitCode != 127 {
+		t.Errorf("Exit code was %v but expected was %v", exitCode, 127)
+	}	
 
 	if &startedAt == nil {
 		t.Errorf("Start timestamp was nil")
