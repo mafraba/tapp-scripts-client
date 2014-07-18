@@ -61,3 +61,17 @@ func TestUnmarshal(t *testing.T) {
 		t.Errorf("Test failed. Incorrect Script UUID %v at %v ", executions[0].Script.UUID, executions[0])
 	}
 }
+
+/*
+	Test the execution of code
+*/
+func TestExecCode(t *testing.T) {
+	const code = "echo Hello!"
+	const expectedOutput = "Hello!"
+
+	output, exitCode, startedAt, finishedAt := ExecCode(code)
+
+	if output != expectedOutput {
+		t.Errorf("Output was %v but expected was %v", output, expectedOutput)
+	}
+}
