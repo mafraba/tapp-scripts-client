@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"sort"
+	"strings"
 )
 
 func main() {
@@ -18,6 +20,7 @@ func main() {
 	client := createClient(config)
 
 	// Get scripts
+	log.Println("Retrieving scripts")
 	response, err := client.Get(config.ApiEndpoint + endPoint)
 	if err != nil {
 		log.Fatalln(err)
@@ -25,17 +28,21 @@ func main() {
 	defer response.Body.Close()
 
 	// Parse them
+	log.Println("Parsing scripts")
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	log.Println("Received : ", string(body))
 	var scriptChars []ScriptCharacterization
 	json.Unmarshal(body, &scriptChars)
 
 	// Sort by execution order
+	log.Println("Sorting scripts")
 	sort.Sort(ByOrder(scriptChars))
 
-	// Execute them sequentially
+	// Execute them sequentially and put conclusions in a channel
+	conclusions := make(chan ScriptConclusion, len(scriptChars))
 	for _, ex := range scriptChars {
 		log.Println("Executing :\n", ex.Script.Code)
 		output, exitCode, startedAt, finishedAt := ExecCode(ex.Script.Code)
@@ -47,5 +54,43 @@ func main() {
 			FinishedAt: finishedAt.Format(timestampLayout),
 		}
 		log.Println("Conclusion :\n", scriptConclusion)
+		conclusions <- scriptConclusion
 	}
+	close(conclusions)
+
+	// Send conclusions back to the server and put responses on a channel
+	// (I guess this can be done concurrently)
+	log.Println("Sending conclusions back to the server")
+	responses := make(chan []string)
+	for conclusion := range conclusions {
+		go sendConclusion(config, client, conclusion, responses)
+	}
+
+	// Log responses
+	for i := 0; i < len(scriptChars); i++ {
+		resp := <-responses
+		log.Printf("Got response to %v : %v", resp[0], resp[1])
+	}
+}
+
+func sendConclusion(config TappConfig, client *http.Client, conclusion ScriptConclusion, responses chan []string) {
+	var url = config.ApiEndpoint + "blueprint/script_conclusions"
+	wrapper := ConclusionWrapper{Conclusion: conclusion}
+	j, err := json.Marshal(wrapper)
+	if err != nil {
+		log.Fatalln("Marshalling error: ", err)
+		responses <- []string{conclusion.UUID, err.Error()}
+		return
+	}
+
+	log.Println("Posting ", string(j))
+	resp, err := client.Post(url, "application/json", strings.NewReader(string(j)))
+	if err != nil {
+		log.Fatalln("Error sending conclusion: ", err)
+		responses <- []string{conclusion.UUID, err.Error()}
+		return
+	}
+	defer resp.Body.Close()
+
+	responses <- []string{conclusion.UUID, resp.Status}
 }

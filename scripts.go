@@ -26,6 +26,10 @@ type ScriptConclusion struct {
 	FinishedAt string `json:"finished_at"`
 }
 
+type ConclusionWrapper struct {
+	Conclusion ScriptConclusion `json:"script_conclusion"`
+}
+
 // ByOrder implements sort.Interface for []ScriptCharacterization based on the Order field
 type ByOrder []ScriptCharacterization
 
