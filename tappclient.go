@@ -9,33 +9,19 @@ import (
 	"strings"
 )
 
+const endPoint = "blueprint/script_characterizations?type=boot"
+
 func main() {
 
 	const configPath = "./tapp/client.xml"
-	const endPoint = "blueprint/script_characterizations?type=boot"
 	const timestampLayout = "2006-01-02T15:04:05.000000-07:00"
 
 	// Create an http client
 	config := openTappConfiguration(configPath)
 	client := createClient(config)
 
-	// Get scripts
-	log.Println("Retrieving scripts")
-	response, err := client.Get(config.ApiEndpoint + endPoint)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer response.Body.Close()
-
-	// Parse them
-	log.Println("Parsing scripts")
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.Println("Received : ", string(body))
-	var scriptChars []ScriptCharacterization
-	json.Unmarshal(body, &scriptChars)
+	// Scripts retrieval
+	scriptChars := retrieveScripts(config, client)
 
 	// Sort by execution order
 	log.Println("Sorting scripts")
@@ -71,6 +57,27 @@ func main() {
 		resp := <-responses
 		log.Printf("Got response to %v : %v", resp[0], resp[1])
 	}
+}
+
+func retrieveScripts(config TappConfig, client *http.Client) (scriptChars []ScriptCharacterization) {
+	// Get scripts
+	log.Println("Retrieving scripts")
+	response, err := client.Get(config.ApiEndpoint + endPoint)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer response.Body.Close()
+
+	// Parse them
+	log.Println("Parsing scripts")
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("Received : ", string(body))
+	json.Unmarshal(body, &scriptChars)
+
+	return
 }
 
 func sendConclusion(config TappConfig, client *http.Client, conclusion ScriptConclusion, responses chan []string) {
