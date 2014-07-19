@@ -9,13 +9,14 @@ import (
 	"strings"
 )
 
-const endPoint = "blueprint/script_characterizations?type=boot"
+const (
+	characterizationsEndpoint = "blueprint/script_characterizations?type=boot"
+	conclusionsEndpoint       = "blueprint/script_conclusions"
+	configPath                = "./tapp/client.xml"
+	timestampLayout           = "2006-01-02T15:04:05.000000-07:00"
+)
 
 func main() {
-
-	const configPath = "./tapp/client.xml"
-	const timestampLayout = "2006-01-02T15:04:05.000000-07:00"
-
 	// Create an http client
 	config := openTappConfiguration(configPath)
 	client := createClient(config)
@@ -62,7 +63,7 @@ func main() {
 func retrieveScripts(config TappConfig, client *http.Client) (scriptChars []ScriptCharacterization) {
 	// Get scripts
 	log.Println("Retrieving scripts")
-	response, err := client.Get(config.ApiEndpoint + endPoint)
+	response, err := client.Get(config.ApiEndpoint + characterizationsEndpoint)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -81,7 +82,7 @@ func retrieveScripts(config TappConfig, client *http.Client) (scriptChars []Scri
 }
 
 func sendConclusion(config TappConfig, client *http.Client, conclusion ScriptConclusion, responses chan []string) {
-	var url = config.ApiEndpoint + "blueprint/script_conclusions"
+	var url = config.ApiEndpoint + conclusionsEndpoint
 	wrapper := ConclusionWrapper{Conclusion: conclusion}
 	j, err := json.Marshal(wrapper)
 	if err != nil {
